@@ -37,6 +37,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'sklearn', 'numpy', 'pandas', 
-        'PIL', 'scipy', 'libact'
-    ]
+        'pillow', 'scipy'
+    ],
+    dependency_links=['git+https://github.com/windj007/libact']
 )
