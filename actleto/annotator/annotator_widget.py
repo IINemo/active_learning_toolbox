@@ -67,7 +67,7 @@ class AnnotatorWidget(Box):
         assert self._answers.shape[0] == self._dataframe.shape[0], \
                'The length of dataframe should match the length of numpy.array with answers.'
         
-        self._drop_labels = visualize_columns
+        self._drop_labels = drop_labels + visualize_columns
         self._visualizer = visualizer
         if self._visualizer is None:
             self._visualizer = TextAreaVisualizer(visualize_columns)

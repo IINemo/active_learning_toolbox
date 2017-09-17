@@ -36,7 +36,7 @@ class ActiveLearnerUiWidget(VBox):
     def __init__(self, 
                  active_learner, 
                  X_helper,
-                 textual_labels = [],
+                 visualize_columns = [],
                  drop_labels = [],
                  display_feature_table = True,
                  y_labels = {"True" : True, 
@@ -72,7 +72,7 @@ class ActiveLearnerUiWidget(VBox):
         self._y_labels = y_labels
         self._visualizer = visualizer
         self._drop_labels = drop_labels
-        self._textual_labels = textual_labels
+        self._visualize_columns = visualize_columns
         self._display_feature_table = display_feature_table
         
         controls = HBox()
@@ -131,7 +131,7 @@ class ActiveLearnerUiWidget(VBox):
     def _make_annotator_widget(self):
         samples_to_annotate = self._active_learner.choose_samples_for_annotation()
         return AnnotatorWidget(dataframe = self._X_helper.iloc[samples_to_annotate],
-                               textual_labels = self._textual_labels,
+                               visualize_columns = self._visualize_columns,
                                drop_labels = self._drop_labels,
                                visualizer = self._visualizer,
                                display_feature_table = self._display_feature_table,
