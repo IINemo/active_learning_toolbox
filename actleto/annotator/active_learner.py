@@ -1,12 +1,13 @@
 import numpy as np
 import pandas as pd
-from .utils import AdaptorLibAct
 import logging
-import threading
 
 # TODO: partial fit.
 # TODO: separate thread for evaluation.
 # TODO: separate thread for training al model.
+
+logger = logging.getLogger('actleto')
+
 
 class ActiveLearner(object):
     """The class that implements active learning logic."""
@@ -20,8 +21,7 @@ class ActiveLearner(object):
                  X_test_dataset = None,
                  y_test_dataset = None,
                  eval_metrics = None,
-                 rnd_start_steps = 0,
-                 logger = logging.getLogger()): 
+                 rnd_start_steps = 0): 
         """ActiveLearner constructor.
         
         Args:
@@ -57,10 +57,12 @@ class ActiveLearner(object):
         
         self._iteration_num = 0
         self._rnd_start_steps = rnd_start_steps
-        self._logger = logger
-        
+
+    def _select_unannotated(self, labels):
+        return np.where(labels.map(lambda x: x is None))[0]
+
     def choose_random_sample_for_annotation(self, number = 40):
-        return np.random.choice(_choose_unannotated(self._y_full_dataset), 
+        return np.random.choice(self._select_unannotated(self._y_full_dataset), 
                                 size = number, 
                                 replace = False)
         
@@ -74,9 +76,9 @@ class ActiveLearner(object):
         if self._model_evaluate is None:
             return None
             
-        y_fit = pd.Series(self._y_full_dataset, index = list(range(self._y_full_dataset.shape[0])))
+        y_fit = pd.Series(self._y_full_dataset)
         y_fit = y_fit[y_fit.notnull()].astype(self._y_dtype)
-        self._logger.info('Number of training samples: {}'.format(y_fit.shape[0]))
+        logger.info('Number of training samples: {}'.format(y_fit.shape[0]))
         
         self._model_evaluate.fit(self._X_full_dataset[y_fit.index], y_fit)
         
@@ -93,10 +95,4 @@ class ActiveLearner(object):
         answers = answers[answers.notnull()] 
         res = self._active_learn_algorithm.make_iteration(answers.index, answers.values)
         self._y_full_dataset[list(answers.index)] = answers.values
-        
-        return res    
-    
-    
-def make_actlib_stg_ctor(stg_ctor):
-    """Creates functor with adaptor for active learning strategies for libact."""
-    return lambda X, y : AdaptorLibAct(X, y, libact_query_alg_ctor = stg_ctor)
+        return res

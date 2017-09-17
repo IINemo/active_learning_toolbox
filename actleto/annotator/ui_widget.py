@@ -1,13 +1,14 @@
-from .active_learner_annotator_widget import ActiveLearnerAnnotatorWidget
+from .annotator_widget import AnnotatorWidget
 
-from traitlets import Int, Dict, Instance, observe
 from ipywidgets import Button, VBox, HBox, Label
 import pandas as pd
 import numpy as np
 import logging
-from .utils import DummyObject
 from threading import Timer
 import os
+
+
+logger = logging.getLogger('actleto')
 
 
 def prep_log(obj):
@@ -43,7 +44,6 @@ class ActiveLearnerUiWidget(VBox):
                  visualizer = None,
                  save_path = 'annotation',
                  evaluation_callback = None,
-                 logger = logging.getLogger(),
                  save_time = 0,
                  *args, **kwargs):
         """Widget constructor.
@@ -58,19 +58,17 @@ class ActiveLearnerUiWidget(VBox):
                 will invoke VisualizerTextArea by deafult.
             save_path (str): the path to save the results.
             evaluation_callback (functor): the callback for evaluation. The default is logging callback.
-            logger: the object for logging. The default is logging.getLogger(). None disables logging.
             save_time (int): Autosave time. If 0 then autosave is disabled. If u use auto save u have to 
                 call stop() method to disabel autosave in the current widget.
             
         """
         super(VBox, self).__init__(*args, **kwargs)
-        
+
         self._X_helper = X_helper
         self._active_learner = active_learner
-        self._logger = logger or DummyObject()
         self._save_path = save_path
-        self._evaluation_callback = evaluation_callback or EvaluationCallbackLogging(self._logger)
-        
+        self._evaluation_callback = evaluation_callback or EvaluationCallbackLogging(logger)
+
         self._y_labels = y_labels
         self._visualizer = visualizer
         self._drop_labels = drop_labels
@@ -112,7 +110,7 @@ class ActiveLearnerUiWidget(VBox):
             self._timer.cancel()
     
     def _save_on_timer(self):
-        self._logger.info('Autosave.')
+        logger.info('Autosave.')
         self._save_answers(os.path.splitext(self._save_path)[0] + '_autosave')
         self._start_save_timer()
         
@@ -132,12 +130,12 @@ class ActiveLearnerUiWidget(VBox):
         
     def _make_annotator_widget(self):
         samples_to_annotate = self._active_learner.choose_samples_for_annotation()
-        return ActiveLearnerAnnotatorWidget(dataframe = self._X_helper.iloc[samples_to_annotate], 
-                                            textual_labels = self._textual_labels,
-                                            drop_labels = self._drop_labels,
-                                            visualizer = self._visualizer,
-                                            display_feature_table = self._display_feature_table,
-                                            y_labels = self._y_labels)
+        return AnnotatorWidget(dataframe = self._X_helper.iloc[samples_to_annotate],
+                               textual_labels = self._textual_labels,
+                               drop_labels = self._drop_labels,
+                               visualizer = self._visualizer,
+                               display_feature_table = self._display_feature_table,
+                               y_labels = self._y_labels)
     
     def _click_next_iteration(self, button):
         if self._timer_check_next_iteration_reset:
@@ -151,7 +149,7 @@ class ActiveLearnerUiWidget(VBox):
         self._active_learner.make_iteration(annotated_indexes, 
                                             self._get_annotator_widget().get_answers())
         
-        self._logger.info(self._iteration_label())
+        logger.info(self._iteration_label())
         eval_res = self._active_learner.evaluate()
         if eval_res is not None:
             self._evaluation_callback(eval_res)
@@ -186,5 +184,5 @@ class ActiveLearnerUiWidget(VBox):
                                              
     def _save_answers(self, path):
         np.save(path, self._active_learner.get_annotation())
-        self._logger.info('Saved. File path: {}'.format(os.path.splitext(path)[0] + '.npy'))
+        logger.info('Saved. File path: {}'.format(os.path.splitext(path)[0] + '.npy'))
         
