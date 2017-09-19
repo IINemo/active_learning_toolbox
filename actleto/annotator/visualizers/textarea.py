@@ -14,7 +14,6 @@ class TextAreaVisualizer(object):
         """
         super().__init__()
         self._text_columns = text_columns
-        print('1!!!!!!!!!!!!!!', self._text_columns)
         self._text_layout = Layout(width = width, height = height)
 
     def __call__(self, dataframe, index):
