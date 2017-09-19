@@ -3,7 +3,6 @@
 #from __future__ import absolute_import, print_function
 
 import io
-import re
 from glob import glob
 from os.path import basename
 from os.path import dirname
@@ -20,24 +19,30 @@ def read(*names, **kwargs):
         encoding=kwargs.get('encoding', 'utf8')
     ).read()
 
+# print(find_packages())
+# 1 / 0
 
 setup(
-    name='jupyter_al_annotator',
+    name='actleto',
     version='0.1.0',
-    description='Widget for active learning annotation in Jupyter IDE.',
+    description='Toolbox for rapid dataset creation and classifier training with active machine learning',
     author='ISA RAS',
     author_email='',
     license='MIT',
     python_requires='>=3.5',
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
-    py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
-    include_package_data=True,
-    keywords='development active learning machine learning annotation corpus',
+    packages=find_packages(),
+#     package_dir={'': 'actleto'},
+#     include_package_data=True,
+    keywords='development active machine learning annotation corpus',
     zip_safe=False,
-    install_requires=[
-        'sklearn', 'numpy', 'pandas', 
-        'pillow', 'scipy'
-    ],
-    dependency_links=['git+https://github.com/windj007/libact']
+    install_requires=['cython', 
+                      'numpy>=1.12.1',
+                      'pandas>=0.20.1',
+                      'scikit-learn>=0.18',
+                      'scipy>=0.19.0',
+                      'Pillow>=4.2.1',
+                      'ipywidgets>=4',
+                      'annoy',
+                      'libact'],
+    dependency_links=['git+https://github.com/windj007/libact/#egg=libact']
 )

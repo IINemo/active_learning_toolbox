@@ -1,11 +1,11 @@
-from traitlets import Int, Dict, Instance, observe
-from ipywidgets import Button, VBox, HBox, HTML, Box, Layout, Label, Textarea, Text, ToggleButtons
+from traitlets import Int, Instance
+from ipywidgets import Button, VBox, HBox, HTML, Box, Layout, Label, Text, ToggleButtons
 import pandas as pd
 import numpy as np
-from .visualizer_textarea import VisualizerTextArea
+from .visualizers import TextAreaVisualizer
 
 
-class ActiveLearnerAnnotatorWidget(Box):
+class AnnotatorWidget(Box):
     """The widget for Jupyter that implements example annotator.
     
     The widget can be used without active learning.
@@ -30,7 +30,7 @@ class ActiveLearnerAnnotatorWidget(Box):
                  answers = None,
                  max_examples = 5,
                  current_position = 0, 
-                 textual_labels = [], 
+                 visualize_columns = [], 
                  drop_labels = [],
                  y_labels = {'True' : True,
                              'False' : False},
@@ -67,31 +67,28 @@ class ActiveLearnerAnnotatorWidget(Box):
         assert self._answers.shape[0] == self._dataframe.shape[0], \
                'The length of dataframe should match the length of numpy.array with answers.'
         
-        self._drop_labels = drop_labels
+        self._drop_labels = drop_labels + visualize_columns
         self._visualizer = visualizer
         if self._visualizer is None:
-            self._visualizer = VisualizerTextArea(textual_labels)
-            self._drop_labels = textual_labels
-        
+            self._visualizer = TextAreaVisualizer(visualize_columns)
+
         self._draw()
         self.observe(self._draw, names='_current_position')
         
     def get_answers(self):
         """Returns numpy.array with answers."""
         return self._answers
-    
+
     def get_dataframe(self):
         """Returns pandas.DataFrame with feature values."""
         return self._dataframe
-        
+
     def _click_prev(self, button):
         self._current_position = max(self._current_position - self._max_examples, 0)
-            
+
     def _click_next(self, button):
-        next_position = self._current_position + self._max_examples
-        if next_position < self._dataframe.shape[0]:
-            self._current_position = next_position
-            
+        self._current_position = min(self._current_position + self._max_examples, self._dataframe.shape[0])
+
     def _int_text_value_changed(self, wdg):
         try:
             new_value = int(wdg.value)
@@ -118,7 +115,6 @@ class ActiveLearnerAnnotatorWidget(Box):
                                     Text(value = str(self._dataframe.shape[0]), 
                                          disabled = True,
                                          layout = Layout(width = '80px'))])
-        
         controls.children[0].on_click(self._click_prev)
         controls.children[1].on_click(self._click_next)
         controls.children[2].on_submit(self._int_text_value_changed)
@@ -138,16 +134,14 @@ class ActiveLearnerAnnotatorWidget(Box):
     def _draw(self, change = None):
         self._table = VBox(layout = Layout(width = '100%'))
         self._table.children += (self._make_controls(),)
-        
-        last_element = self._current_position + self._max_examples
-        if last_element > self._dataframe.shape[0]:
-            last_element = self._dataframe.shape[0]
-        
+
+        last_element = min(self._current_position + self._max_examples, self._dataframe.shape[0])
+
         for i in range(self._current_position, last_element):
             data_row = VBox(layout = self._example_layout)
-            
+
             if self._display_feature_table:
-                elem = self._dataframe.iloc[i, :].drop(self._drop_labels)
+                elem = self._dataframe.iloc[i].drop(self._drop_labels)
                 data_row.children += (HTML(value = pd.DataFrame([elem.values], 
                                                                 columns = elem.index, 
                                                                 index = [self._dataframe.index[i]])
