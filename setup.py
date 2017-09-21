@@ -42,7 +42,6 @@ setup(
                       'scipy>=0.19.0',
                       'Pillow>=4.2.1',
                       'ipywidgets>=4',
-                      'annoy',
-                      'libact'],
+                      'annoy'],
     dependency_links=['git+https://github.com/windj007/libact/#egg=libact']
 )
