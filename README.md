@@ -85,10 +85,19 @@ pip install git+https://github.com/IINemo/active_learning_toolbox
 Usage
 =====
 
-See example for [MNIST dataset
+See an example for [MNIST dataset
 annotation](https://github.com/IINemo/active_learning_toolbox/blob/master/examples/MNIST_annotation.ipynb)
-and example for [20 newsgroups
+and an example for [20 newsgroups
 annotation](https://github.com/IINemo/active_learning_toolbox/blob/master/examples/20newsgroups.ipynb).
+
+If you have Docker installed, you can test the examples with [windj007/jupyter-keras-tool](https://hub.docker.com/r/windj007/jupyter-keras-tools/):
+
+```
+cd `<package dir>`/examples
+docker run -ti --rm -v `pwd`:/notebook -p 8888:8888 windj007/jupyter-keras-tools
+```
+Then open [http://localhost:8888](http://localhost:8888) in a browser (will launch Jupyter IDE) and open an example notebook.
+
 
 Cite
 ====
