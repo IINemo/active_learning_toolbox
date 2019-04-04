@@ -47,7 +47,7 @@ class ActiveLearner(object):
         if y_full_dataset is not None:
             self._y_full_dataset = y_full_dataset # TODO: validate dimentions
         else:
-            self._y_full_dataset = np.array([None] * self._X_full_dataset.shape[0])
+            self._y_full_dataset = [None] * self._X_full_dataset.shape[0]
             
         self._active_learn_algorithm = active_learn_alg_ctor(self._X_full_dataset, 
                                                              self._y_full_dataset)
@@ -60,6 +60,9 @@ class ActiveLearner(object):
 
     def _select_unannotated(self, labels):
         return np.where(labels.map(lambda x: x is None))[0]
+    
+    def start(self):
+        self._active_learn_algorithm.start()
 
     def choose_random_sample_for_annotation(self, number = 40):
         return np.random.choice(self._select_unannotated(self._y_full_dataset), 
@@ -72,15 +75,20 @@ class ActiveLearner(object):
         else:
             return self._active_learn_algorithm.choose_samples_for_annotation()
     
-    def evaluate(self):
+    def evaluate(self, fit_model=True):
         if self._model_evaluate is None:
             return None
-            
-        y_fit = pd.Series(self._y_full_dataset)
-        y_fit = y_fit[y_fit.notnull()].astype(self._y_dtype)
-        logger.info('Number of training samples: {}'.format(y_fit.shape[0]))
         
-        self._model_evaluate.fit(self._X_full_dataset[y_fit.index], y_fit)
+        if fit_model:
+            selector = [n for n, _ in enumerate(self._y_full_dataset) if e is not None]
+            y_fit = [self._y_full_dataset[i] for i in selector]
+            #y_fit = [e for e in self._y_full_dataset if e is not None]
+
+            #y_fit = pd.Series(self._y_full_dataset)
+            #y_fit = y_fit[y_fit.notnull()].astype(self._y_dtype)
+            logger.info('Number of training samples: {}'.format(len(y_fit)))
+
+            self._model_evaluate.fit(self._X_full_dataset[selector], y_fit)
         
         preds = self._model_evaluate.predict(self._X_test_dataset)
         return {metric.__name__ : metric(preds, self._y_test_dataset) 
@@ -91,8 +99,11 @@ class ActiveLearner(object):
     
     def make_iteration(self, indexes, answers):
         self._iteration_num += 1
-        answers = pd.Series(answers, index = indexes)
-        answers = answers[answers.notnull()] 
-        res = self._active_learn_algorithm.make_iteration(answers.index, answers.values)
-        self._y_full_dataset[list(answers.index)] = answers.values
-        return res
+        
+        selector = ((answers == np.array(None)).sum(axis=1) == 0)
+        answers = answers[selector]
+        indexes = indexes[selector]
+        for num, i in enumerate(indexes):
+            self._y_full_dataset[i] = answers[num]
+        
+        return self._active_learn_algorithm.make_iteration(indexes, answers)

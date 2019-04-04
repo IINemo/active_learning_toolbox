@@ -28,6 +28,9 @@ class MultipleQueryStrategy(object):
             return { sample for sample, _ in id_score_list[:self.query_n] }
         except TypeError:
             return { self.impl.make_query() for _ in range(self.query_n) }
+    
+    def update(self, *args, **kwargs):
+        return self.impl.update(*args, **kwargs)
 
 
 class SklearnProbaAdapterWithUnlabeled(ProbabilisticModel):
