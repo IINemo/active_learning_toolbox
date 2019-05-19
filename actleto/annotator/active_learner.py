@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger('actleto')
 
 
-class ActiveLearner(object):
+class ActiveLearner:
     """The class that implements active learning logic."""
     
     def __init__(self, 

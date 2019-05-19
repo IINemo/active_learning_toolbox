@@ -2,8 +2,11 @@ import numpy
 from libact.base.interfaces import ProbabilisticModel, ContinuousModel
 from libact.base.dataset import Dataset, ensure_sklearn_compat
 
+import logging
+logger = logging.getLogger('actleto')
 
-class MPErr(object):
+
+class MPErr:
     """Most probable error query strategy.
     
     Finds the negative samples that are likely to be positive ones 

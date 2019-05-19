@@ -3,7 +3,7 @@ from libact.base.dataset import ensure_sklearn_compat
 from libact.base.interfaces import ProbabilisticModel, ContinuousModel
 
 
-class MultipleQueryStrategy(object):    
+class MultipleQueryStrategy:    
     """The helper class for quering multiple instances from the unlabeled dataset
     
     Decorator for libact strategies that queries multiple instances from unlabeled

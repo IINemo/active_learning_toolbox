@@ -15,7 +15,7 @@ def prep_log(obj):
     return '\n' + str(obj)
 
 
-class EvaluationCallbackLogging(object):
+class EvaluationCallbackLogging:
     def __init__(self, logger):
         self._logger = logger
         
