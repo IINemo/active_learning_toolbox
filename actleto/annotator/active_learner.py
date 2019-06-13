@@ -21,7 +21,8 @@ class ActiveLearner(object):
                  X_test_dataset = None,
                  y_test_dataset = None,
                  eval_metrics = None,
-                 rnd_start_steps = 0): 
+                 rnd_start_steps = 0,
+                 rnd_start_samples = 10): 
         """ActiveLearner constructor.
         
         Args:
@@ -57,21 +58,22 @@ class ActiveLearner(object):
         
         self._iteration_num = 0
         self._rnd_start_steps = rnd_start_steps
+        self._rnd_start_samples = rnd_start_samples
 
     def _select_unannotated(self, labels):
-        return np.where(labels.map(lambda x: x is None))[0]
+        return np.where([(e is None) for e in labels])[0]
     
     def start(self):
         self._active_learn_algorithm.start()
 
-    def choose_random_sample_for_annotation(self, number = 40):
+    def choose_random_sample_for_annotation(self, number):
         return np.random.choice(self._select_unannotated(self._y_full_dataset), 
                                 size = number, 
                                 replace = False)
         
     def choose_samples_for_annotation(self):
         if self._iteration_num < self._rnd_start_steps:
-            return self.choose_random_sample_for_annotation()
+            return self.choose_random_sample_for_annotation(self._rnd_start_samples)
         else:
             return self._active_learn_algorithm.choose_samples_for_annotation()
     
