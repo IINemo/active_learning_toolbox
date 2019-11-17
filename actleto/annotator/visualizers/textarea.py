@@ -15,8 +15,12 @@ class TextAreaVisualizer(object):
         super().__init__()
         self._text_columns = text_columns
         self._text_layout = Layout(width = width, height = height)
+        
+    def init(self, dataframe, answers):
+        self._dataframe = dataframe
+        self._answers = answers
 
-    def __call__(self, dataframe, index):
+    def __call__(self, index):
         """Invokes the visuzlizer.
 
         Args:
@@ -27,7 +31,7 @@ class TextAreaVisualizer(object):
             list: widgets that visualize the row
         """
         result = []
-        row = dataframe.iloc[index]
+        row = self._dataframe.iloc[index]
         for label in self._text_columns:
             result.append(Label('{}:'.format(label)))
             result.append(Textarea(value = str(row[label]),

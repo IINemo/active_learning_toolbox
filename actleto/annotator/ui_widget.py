@@ -45,6 +45,7 @@ class ActiveLearnerUiWidget(VBox):
                  save_path = 'annotation',
                  evaluation_callback = None,
                  save_time = 0,
+                 answers = None,
                  *args, **kwargs):
         """Widget constructor.
         
@@ -68,6 +69,7 @@ class ActiveLearnerUiWidget(VBox):
         self._active_learner = active_learner
         self._save_path = save_path
         self._evaluation_callback = evaluation_callback or EvaluationCallbackLogging(logger)
+        self._answers = answers
 
         self._y_labels = y_labels
         self._visualizer = visualizer
@@ -129,8 +131,10 @@ class ActiveLearnerUiWidget(VBox):
         self.children[0].children[1].value = self._iteration_label()
         
     def _make_annotator_widget(self):
-        samples_to_annotate = self._active_learner.choose_samples_for_annotation()
+        #samples_to_annotate = self._active_learner.choose_samples_for_annotation()
+        samples_to_annotate = self._X_helper.index
         return AnnotatorWidget(dataframe = self._X_helper.iloc[samples_to_annotate],
+                               answers = self._answers,
                                visualize_columns = self._visualize_columns,
                                drop_labels = self._drop_labels,
                                visualizer = self._visualizer,

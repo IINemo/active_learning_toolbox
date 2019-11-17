@@ -54,9 +54,12 @@ class AnnotatorWidget(Box):
         """
         super(Box, self).__init__(*args, **kwargs)
         
-        self._y_labels = y_labels
-        self._y_labels[self.ANNOT_DONT_KNOW] = None
-        self._y_labels_reversed = {v : k for k, v in self._y_labels.items()}
+        self._y_labels = None
+        if y_labels is not None:
+            self._y_labels = y_labels
+            self._y_labels[self.ANNOT_DONT_KNOW] = None
+            self._y_labels_reversed = {v : k for k, v in self._y_labels.items()}
+            
         self._display_feature_table = display_feature_table
         
         self._dataframe = dataframe
@@ -71,6 +74,7 @@ class AnnotatorWidget(Box):
         self._visualizer = visualizer
         if self._visualizer is None:
             self._visualizer = TextAreaVisualizer(visualize_columns)
+        self._visualizer.init(dataframe=self._dataframe, answers=self.get_answers())
 
         self._draw()
         self.observe(self._draw, names='_current_position')
@@ -147,15 +151,16 @@ class AnnotatorWidget(Box):
                                                                 index = [self._dataframe.index[i]])
                                            .to_html(classes=['table', 'table-striped'])),)
 
-            data_row.children += self._visualizer(self._dataframe, i)
+            data_row.children += self._visualizer(i)
             
-            data_row.children += (ToggleButtons(options=([self.ANNOT_DONT_KNOW] + 
-                                                [k for k in self._y_labels.keys() if k != self.ANNOT_DONT_KNOW]),
-                                                value = self._answer_to_label(self._answers[i]),
-                                                description='Your annotation:',
-                                                disabled=False),)
-            data_row.children[-1].observe(lambda tgl_bt, num = i: self._annotate(num, tgl_bt), 
-                                          names='value')
+            if self._y_labels is not None:
+                data_row.children += (ToggleButtons(options=([self.ANNOT_DONT_KNOW] + 
+                                                    [k for k in self._y_labels.keys() if k != self.ANNOT_DONT_KNOW]),
+                                                    value = self._answer_to_label(self._answers[i]),
+                                                    description='Your annotation:',
+                                                    disabled=False),)
+                data_row.children[-1].observe(lambda tgl_bt, num = i: self._annotate(num, tgl_bt), 
+                                              names='value')
 
             self._table.children += (data_row,)
         

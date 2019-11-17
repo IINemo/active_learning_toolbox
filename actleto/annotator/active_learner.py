@@ -102,9 +102,21 @@ class ActiveLearner(object):
     def make_iteration(self, indexes, answers):
         self._iteration_num += 1
         
-        selector = ((answers == np.array(None)).sum(axis=1) == 0)
+        selector = [False for _ in range(answers.shape[0])]
+        for ind, answ in enumerate(answers):
+            if answ is None:
+                selector[ind] = False
+            elif all(e is None for e in answ):
+                selector[ind] = False
+            else:
+                selector[ind] = True
+                
+        #selector = ((answers == np.array(None)).sum(axis=1) == 0)
         answers = answers[selector]
-        indexes = indexes[selector]
+        indexes = np.array(indexes)[selector]
+        #print(indexes)
+#         with open('tmp_log.log', 'w') as f:
+#             f.write(str(indexes))
         for num, i in enumerate(indexes):
             self._y_full_dataset[i] = answers[num]
         

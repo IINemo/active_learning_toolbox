@@ -27,7 +27,11 @@ class ImageVisualizer(object):
         self._img_mode = img_mode
         self._preview_shape = preview_shape
     
-    def __call__(self, dataframe, index):
+    def init(self, dataframe, answers):
+        self._dataframe = dataframe
+        self._answers = answers
+    
+    def __call__(self, index):
         """Invokes the visualizer.
         
         Args:
@@ -38,7 +42,8 @@ class ImageVisualizer(object):
             tuple: The list of widgets that visualize the row with number index.
             
         """
-        img_array = dataframe.iloc[index][self._columns_range[0] : self._columns_range[1]].as_matrix()
+        img_array = self._dataframe.iloc[index][self._columns_range[0] : 
+                                                self._columns_range[1]].as_matrix()
 
         if img_array.shape[0] > np.product(self._img_shape):
             cur_img_shape = self._img_shape + (-1,)
