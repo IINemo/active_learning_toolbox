@@ -7,9 +7,12 @@ integration with [libact](https://github.com/ntucllab/libact) Python library.
 
  
 
-Example of active learning annotation of MNIST dataset with the Jupyter widget.
+Example of active learning annotation of MNIST dataset with the Jupyter widget:
 
 ![](https://github.com/IINemo/jupyter_al_annotator/blob/master/docs/al.png?raw=true)
+
+Example of active learning annotation of JNLPBA for sequence tagging:
+![](https://github.com/IINemo/jupyter_al_annotator/blob/seq/docs/sequence_tagging.png?raw=true)
 
 Active learning
 ===============
@@ -85,10 +88,13 @@ pip install git+https://github.com/IINemo/active_learning_toolbox
 Usage
 =====
 
-See an example for [MNIST dataset
-annotation](https://github.com/IINemo/active_learning_toolbox/blob/master/examples/MNIST_annotation.ipynb)
-and an example for [20 newsgroups
-annotation](https://github.com/IINemo/active_learning_toolbox/blob/master/examples/20newsgroups.ipynb).
+See examples: 
+- For image classification [(MNIST dataset
+annotation)](https://github.com/IINemo/active_learning_toolbox/blob/master/examples/MNIST_annotation.ipynb)  
+- For text classification [(20 newsgroups
+annotation)](https://github.com/IINemo/active_learning_toolbox/blob/master/examples/20newsgroups.ipynb)  
+- For seqeunce tagging [(JNLPBA)](https://github.com/IINemo/active_learning_toolbox/blob/seq/examples/seqtagging_jnlpba.ipynb)  
+
 
 If you have Docker installed, you can test the examples with [windj007/jupyter-keras-tool](https://hub.docker.com/r/windj007/jupyter-keras-tools/):
 
@@ -105,8 +111,19 @@ Cite
 If you use active learning toolbox in academic works, please cite (to be
 published):
 
- 
+1. Active learning for sequence tagging:
+*BibTex:*
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@inproceedings{shelmanov2019bibm,
+    title={Active Learning with Deep Pre-trained Models for Sequence Tagging of Clinical and Biomedical Texts},
+    author={Artem Shelmanov and Vadim Liventsev and Danil Kireev and Nikita Khromov and Alexander Panchenko and Irina Fedulova and Dmitry V. Dylov},
+    booktitle={Proceedings of International Conference on Bioinformatics & Biomedicine (BIBM)},
+    year={2019}
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+2. Active learning for text classification:
 *BibTex:*
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -115,7 +132,7 @@ published):
     author={Roman Suvorov and Artem Shelmanov and Ivan Smirnov},
     booktitle={Proceedings of AINL: Artificial Intelligence and Natural Language Conference},
     publisher = {Springer, Communications in Computer and Information Science},
-    year={2017}
+    year={2018}
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
