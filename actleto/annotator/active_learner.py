@@ -15,7 +15,7 @@ class ActiveLearner(object):
     def __init__(self, 
                  active_learn_alg_ctor,
                  X_full_dataset, 
-                 y_dtype,
+                 y_dtype='int',
                  y_full_dataset = None, 
                  model_evaluate = None,
                  X_test_dataset = None,
