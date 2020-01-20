@@ -131,8 +131,8 @@ class ActiveLearnerUiWidget(VBox):
         self.children[0].children[1].value = self._iteration_label()
         
     def _make_annotator_widget(self):
-        #samples_to_annotate = self._active_learner.choose_samples_for_annotation()
-        samples_to_annotate = self._X_helper.index
+        samples_to_annotate = self._active_learner.choose_samples_for_annotation()
+        #samples_to_annotate = self._X_helper.index
         return AnnotatorWidget(dataframe = self._X_helper.iloc[samples_to_annotate],
                                answers = self._answers,
                                visualize_columns = self._visualize_columns,
