@@ -78,7 +78,7 @@ class ADWeS(object):
         unlabeled_entry_ids = np.asarray(unlabeled_entry_ids)
         X_pool = ensure_sklearn_compat(X_pool)
 
-        _, ids_with_scores = self.base_strategy.make_query(return_score=True)
+        _, ids_with_scores = self.basic_strategy.make_query(return_score=True)
         unlabeled_entry_ids, base_score = zip(*ids_with_scores)
 
         # normalize: we dont care about absolute values, only relative to rank samples
