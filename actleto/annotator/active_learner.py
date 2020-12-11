@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger('actleto')
 
 
-class ActiveLearner(object):
+class ActiveLearner:
     """The class that implements active learning logic."""
     
     def __init__(self, 
@@ -84,12 +84,6 @@ class ActiveLearner(object):
         if fit_model:
             selector = [n for n, e in enumerate(self._y_full_dataset) if e is not None]
             y_fit = [self._y_full_dataset[i] for i in selector]
-            #y_fit = [e for e in self._y_full_dataset if e is not None]
-
-            #y_fit = pd.Series(self._y_full_dataset)
-            #y_fit = y_fit[y_fit.notnull()].astype(self._y_dtype)
-
-            #self._model_evaluate.fit(self._X_full_dataset[selector], y_fit)
             X_fit = [self._X_full_dataset[i] for i in selector]
             logger.info('Number of training samples: {}'.format(len(y_fit)))
             
@@ -114,12 +108,9 @@ class ActiveLearner(object):
             else:
                 selector[ind] = True
                 
-        #selector = ((answers == np.array(None)).sum(axis=1) == 0)
         answers = answers[selector]
         indexes = np.array(indexes)[selector]
-        #print(indexes)
-#         with open('tmp_log.log', 'w') as f:
-#             f.write(str(indexes))
+        
         for num, i in enumerate(indexes):
             self._y_full_dataset[i] = answers[num]
         
